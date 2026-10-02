@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>开发组任务登记及志愿时长分配系统</title>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>开发组任务登记及志愿时长分配系统</h1>
+    <div class="body">
+        <div class="container" id="task-container">
+            <h2>任务登记</h2>
+            <ul>
+            {% for task in tasks %}
+                <li>
+                    <p><span>{{ task.name }}</span> <button class="edit-btn" data-task-id="{{ task.id }}">编辑</button> <button class="delete-btn" data-task-id="{{ task.id }}" data-task-name="{{ task.name }}">删除</button></p>
+                    <p>任务时间：<span>{{ task.start_time }}</span> ~ <span>{{ task.end_time }}</span></p>
+                    <p>任务内容：<span>{{ task.description }}</span></p>
+                    <p>志愿时长：<span>{{ task.hours }}</span> 小时</p>
+                    <p>参与人员：<span>{{ '、'.join(task.participants) }}</span></p>
+                </li>
+            {% else %}
+                <li>暂无任务</li>
+            {% endfor %}
+            </ul>
+        </div>
+        <div class="container" id="status-container">
+            <h2>志愿时长统计</h2>
+            <ul>
+            {% for participant, hours in status.items() %}
+                <li><a href="/participant/{{ participant }}">{{ participant }}</a>：<span>{{ hours }}</span> 小时</li>
+            {% else %}
+                <li>暂无志愿时长统计</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
