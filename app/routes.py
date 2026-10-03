@@ -1,6 +1,6 @@
 from datetime import datetime
-
-from flask import Blueprint, render_template
+from .models import Task, User, event_participants
+from flask import Blueprint, render_template, jsonify, request
 
 main_bp = Blueprint('main', __name__)
 
@@ -31,3 +31,9 @@ def home():
         for participant in task['participants']:
             status[participant] = status.get(participant, 0) + task['hours']
     return render_template('index.html', tasks=tasks, status=status)
+
+@main_bp.route('/tasks/list', methods=['GET'])
+def list_tasks():
+    tasks = Task.query.order_by(Task.start_time.desc()).all()
+    return jsonify([task.to_dict() for task in tasks])
+    
