@@ -41,5 +41,6 @@ class Task(db.Model):
             'start_time': self.start_time.isoformat(),
             'end_time': self.end_time.isoformat(),
             'hours': self.hours,
-            'users': users
+            'users': users,
+            'description': self.description
         }
