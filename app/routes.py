@@ -5,6 +5,7 @@ from .extentions import db
 
 main_bp = Blueprint('main', __name__)
 
+# 美丽的主页
 @main_bp.route('/')
 def home():
     current_app.logger.debug("Fetching all tasks from the database.")
@@ -15,12 +16,12 @@ def home():
         for user in task['users']:
             status[user] = status.get(user, 0) + task['hours']
     return render_template('index.html', tasks=tasks, status=status)
-
+# 获取任务列表
 @main_bp.route('/tasks/list', methods=['GET'])
 def list_tasks():
     tasks = Task.query.order_by(Task.start_time.desc()).all()
     return jsonify([task.to_dict() for task in tasks])
-
+# 添加任务
 @main_bp.route('/tasks/add', methods=['POST'])
 def add_task():
     data = request.get_json()
@@ -56,12 +57,12 @@ def add_task():
     db.session.commit()
 
     return jsonify(task.to_dict()), 201
-
+# 获取用户列表
 @main_bp.route('/users/list', methods=['GET'])
 def list_users():
     users = User.query.order_by(User.username).all()
     return jsonify([user.to_dict() for user in users])
-
+# 添加用户
 @main_bp.route('/users/add', methods=['POST'])
 def add_user():
     data = request.get_json()
