@@ -36,4 +36,8 @@ def home():
 def list_tasks():
     tasks = Task.query.order_by(Task.start_time.desc()).all()
     return jsonify([task.to_dict() for task in tasks])
-    
+
+@main_bp.route('/users/list', methods=['GET'])
+def list_users():
+    users = User.query.order_by(User.username).all()
+    return jsonify([user.to_dict() for user in users])
