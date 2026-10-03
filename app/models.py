@@ -2,10 +2,10 @@ from .extentions import db
 from datetime import datetime
 
 # 关联表：User和Task之间的多对多关系
-event_participants = db.Table(
-    'event_participants',
-    db.Column('event_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
-    db.Column('participant_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+task_users = db.Table(
+    'task_users',
+    db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
 )
 
 class User(db.Model):
@@ -13,8 +13,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     # 反向引用：通过User访问Task
-    tasks = db.relationship('Task', secondary=event_participants, back_populates='participants', lazy='dynamic')
-    
+    tasks = db.relationship('Task', secondary=task_users, back_populates='participants', lazy='dynamic')
+
     def to_dict(self):
         return {
             'id': self.id,
@@ -31,7 +31,7 @@ class Task(db.Model):
     hours = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
     # 反向引用：通过Task访问User
-    participants = db.relationship('User', secondary=event_participants, back_populates='tasks')
+    participants = db.relationship('User', secondary=task_users, back_populates='tasks')
 
     def to_dict(self):
         parts = [p.username for p in self.participants if p.username]
@@ -41,5 +41,5 @@ class Task(db.Model):
             'start_time': self.start_time.isoformat(),
             'end_time': self.end_time.isoformat(),
             'hours': self.hours,
-            'participant': parts
+            'participants': parts
         }
