@@ -13,7 +13,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     # 反向引用：通过User访问Task
-    tasks = db.relationship('Task', secondary=task_users, back_populates='participants', lazy='dynamic')
+    tasks = db.relationship('Task', secondary=task_users, back_populates='users', lazy='dynamic')
 
     def to_dict(self):
         return {
@@ -31,15 +31,15 @@ class Task(db.Model):
     hours = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
     # 反向引用：通过Task访问User
-    participants = db.relationship('User', secondary=task_users, back_populates='tasks')
+    users = db.relationship('User', secondary=task_users, back_populates='tasks')
 
     def to_dict(self):
-        parts = [p.username for p in self.participants if p.username]
+        users = [p.username for p in self.users if p.username]
         return {
             'id': self.id,
             'name': self.name,
             'start_time': self.start_time.isoformat(),
             'end_time': self.end_time.isoformat(),
             'hours': self.hours,
-            'participants': parts
+            'users': users
         }

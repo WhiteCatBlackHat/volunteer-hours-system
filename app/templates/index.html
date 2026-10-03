@@ -18,7 +18,7 @@
                     <p>任务时间：<span>{{ task.start_time }}</span> ~ <span>{{ task.end_time }}</span></p>
                     <p>任务内容：<span>{{ task.description }}</span></p>
                     <p>志愿时长：<span>{{ task.hours }}</span> 小时</p>
-                    <p>参与人员：<span>{{ '、'.join(task.participants) }}</span></p>
+                    <p>参与人员：<span>{{ '、'.join(task.users) }}</span></p>
                 </li>
             {% else %}
                 <li>暂无任务</li>
@@ -28,8 +28,8 @@
         <div class="container" id="status-container">
             <h2>志愿时长统计</h2>
             <ul>
-            {% for participant, hours in status.items() %}
-                <li><a href="/participant/{{ participant }}">{{ participant }}</a>：<span>{{ hours }}</span> 小时</li>
+            {% for user, hours in status.items() %}
+                <li><a href="/user/{{ user }}">{{ user }}</a>：<span>{{ hours }}</span> 小时</li>
             {% else %}
                 <li>暂无志愿时长统计</li>
             {% endfor %}

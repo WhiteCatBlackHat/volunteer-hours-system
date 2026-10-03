@@ -12,8 +12,8 @@ def home():
     tasks = [task.to_dict() for task in tasks]
     status = {}
     for task in tasks:
-        for participant in task['participants']:
-            status[participant] = status.get(participant, 0) + task['hours']
+        for user in task['users']:
+            status[user] = status.get(user, 0) + task['hours']
     return render_template('index.html', tasks=tasks, status=status)
 
 @main_bp.route('/tasks/list', methods=['GET'])
