@@ -57,6 +57,51 @@ def add_task():
     db.session.commit()
 
     return jsonify(task.to_dict()), 201
+# 删除任务
+@main_bp.route('/tasks/delete/<int:task_id>', methods=['DELETE'])
+def delete_task(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({'error': 'Task not found'}), 404
+
+    db.session.delete(task)
+    db.session.commit()
+    return jsonify({'message': 'Task deleted successfully'}), 200
+# 编辑任务
+@main_bp.route('/tasks/edit/<int:task_id>', methods=['PUT'])
+def edit_task(task_id):
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No input data provided'}), 400
+
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({'error': 'Task not found'}), 404
+
+    # Update task fields
+    task.name = data.get('name', task.name)
+    task.description = data.get('description', task.description)
+
+    # Update time fields if provided
+    if 'start_time' in data:
+        try:
+            task.start_time = datetime.fromisoformat(data['start_time'])
+        except ValueError:
+            return jsonify({'error': 'Invalid start_time format'}), 400
+
+    if 'end_time' in data:
+        try:
+            task.end_time = datetime.fromisoformat(data['end_time'])
+        except ValueError:
+            return jsonify({'error': 'Invalid end_time format'}), 400
+
+    # Update hours if provided
+    if 'hours' in data:
+        task.hours = data['hours']
+
+    db.session.commit()
+    return jsonify(task.to_dict()), 200
+
 # 获取用户列表
 @main_bp.route('/users/list', methods=['GET'])
 def list_users():
@@ -81,3 +126,12 @@ def add_user():
     db.session.commit()
 
     return jsonify(user.to_dict()), 201
+# 计算某个用户的总志愿时长
+@main_bp.route('/users/<username>/total_hours', methods=['GET'])
+def total_hours(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    total_hours = sum(task.hours for task in user.tasks)
+    return jsonify({'username': username, 'total_hours': total_hours})
