@@ -16,11 +16,13 @@ def home():
         for user in task['users']:
             status[user] = status.get(user, 0) + task['hours']
     return render_template('index.html', tasks=tasks, status=status)
+
 # 获取任务列表
 @main_bp.route('/tasks/list', methods=['GET'])
 def list_tasks():
     tasks = Task.query.order_by(Task.start_time.desc()).all()
     return jsonify([task.to_dict() for task in tasks])
+
 # 添加任务
 @main_bp.route('/tasks/add', methods=['POST'])
 def add_task():
@@ -57,6 +59,7 @@ def add_task():
     db.session.commit()
 
     return jsonify(task.to_dict()), 201
+
 # 删除任务
 @main_bp.route('/tasks/delete/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
@@ -67,6 +70,7 @@ def delete_task(task_id):
     db.session.delete(task)
     db.session.commit()
     return jsonify({'message': 'Task deleted successfully'}), 200
+
 # 编辑任务
 @main_bp.route('/tasks/edit/<int:task_id>', methods=['PUT'])
 def edit_task(task_id):
@@ -107,6 +111,7 @@ def edit_task(task_id):
 def list_users():
     users = User.query.order_by(User.username).all()
     return jsonify([user.to_dict() for user in users])
+
 # 添加用户
 @main_bp.route('/users/add', methods=['POST'])
 def add_user():
@@ -126,6 +131,7 @@ def add_user():
     db.session.commit()
 
     return jsonify(user.to_dict()), 201
+
 # 计算某个用户的总志愿时长
 @main_bp.route('/users/<username>/total_hours', methods=['GET'])
 def total_hours(username):
