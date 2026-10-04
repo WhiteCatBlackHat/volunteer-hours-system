@@ -1,4 +1,4 @@
-h1, h2 {
+h1 {
     text-align: center;
 }
 .body {
@@ -7,15 +7,33 @@ h1, h2 {
     justify-content: center;
 }
 .container {
+    width: 400px;
     border: 2px solid #ccc;
     border-radius: 5px;
     padding: 20px;
-    margin: 20px;
+    margin: 15px;
+}
+.container h2 {
+    margin: 0;
+}
+.container-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 ul {
     padding-left: 20px;
 }
-#status-container a {
-    text-decoration: underline;
+a {
+    text-decoration: none;
     color: #007BFF;
+}
+a:hover {
+    text-decoration: underline;
+}
+ul a {
+    text-decoration: underline;
+}
+ul a:hover {
+    color: #0056b3;
 }
