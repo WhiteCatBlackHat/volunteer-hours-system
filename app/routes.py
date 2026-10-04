@@ -18,13 +18,13 @@ def home():
     return render_template('index.html', tasks=tasks, status=status)
 
 # 获取任务列表
-@main_bp.route('/tasks/list', methods=['GET'])
+@main_bp.route('/task/list', methods=['GET'])
 def list_tasks():
     tasks = Task.query.order_by(Task.start_time.desc()).all()
     return jsonify([task.to_dict() for task in tasks])
 
 # 添加任务
-@main_bp.route('/tasks/add', methods=['POST'])
+@main_bp.route('/task/add', methods=['POST'])
 def add_task():
     data = request.get_json()
     if not data:
@@ -61,7 +61,7 @@ def add_task():
     return jsonify(task.to_dict()), 201
 
 # 删除任务
-@main_bp.route('/tasks/delete/<int:task_id>', methods=['DELETE'])
+@main_bp.route('/task/delete/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
     task = Task.query.get(task_id)
     if not task:
@@ -72,7 +72,7 @@ def delete_task(task_id):
     return jsonify({'message': 'Task deleted successfully'}), 200
 
 # 编辑任务
-@main_bp.route('/tasks/edit/<int:task_id>', methods=['PUT'])
+@main_bp.route('/task/edit/<int:task_id>', methods=['PUT'])
 def edit_task(task_id):
     data = request.get_json()
     if not data:
@@ -107,13 +107,13 @@ def edit_task(task_id):
     return jsonify(task.to_dict()), 200
 
 # 获取用户列表
-@main_bp.route('/users/list', methods=['GET'])
+@main_bp.route('/user/list', methods=['GET'])
 def list_users():
     users = User.query.order_by(User.username).all()
     return jsonify([user.to_dict() for user in users])
 
 # 添加用户
-@main_bp.route('/users/add', methods=['POST'])
+@main_bp.route('/user/add', methods=['POST'])
 def add_user():
     data = request.get_json()
     if not data:
@@ -133,7 +133,7 @@ def add_user():
     return jsonify(user.to_dict()), 201
 
 # 计算某个用户的总志愿时长
-@main_bp.route('/users/<username>/total_hours', methods=['GET'])
+@main_bp.route('/user/<username>/total_hours', methods=['GET'])
 def total_hours(username):
     user = User.query.filter_by(username=username).first()
     if not user:
