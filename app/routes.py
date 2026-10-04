@@ -35,7 +35,7 @@ def add_task():
     end_time_str = data.get('end_time')
     hours = data.get('hours')
     description = data.get('description', '')
-    user_names = data.get('user_names', [])
+    usernames = data.get('usernames', [])
 
     if not all([name, start_time_str, end_time_str, hours]):
         return jsonify({'error': 'Missing required fields'}), 400
@@ -48,12 +48,12 @@ def add_task():
 
     task = Task(name=name, start_time=start_time, end_time=end_time, hours=hours, description=description)
 
-    for user_name in user_names:
-        user = User.query.filter_by(username=user_name).first()
+    for username in usernames:
+        user = User.query.filter_by(username=username).first()
         if user:
             task.users.append(user)
         else:
-            return jsonify({'error': f'User {user_name} not found'}), 404
+            return jsonify({'error': f'User {username} not found'}), 404
 
     db.session.add(task)
     db.session.commit()
