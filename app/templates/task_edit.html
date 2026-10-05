@@ -36,7 +36,7 @@
                 <textarea id="task-description" name="task_description" rows="5">{{ task.description }}</textarea>
                 <label for="username">参与者名（每行一个）：</label>
                 <textarea id="username" name="username" rows="5">{{ task.users | map(attribute='username') | join('\n') }}</textarea>
-                <button type="submit">提交</button>
+                <button type="submit" id="submit">提交</button>
             </form>
             <div id="result"></div>
         </div>

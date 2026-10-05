@@ -18,7 +18,7 @@
             <form id="edit-user-form" onsubmit="submitEditUserForm(); return false;" data-original-username="{{ user.username }}">
                 <label for="username">修改后的参与者名：</label>
                 <textarea id="username" name="username" rows="2" placeholder="原名：{{ user.username }}"></textarea>
-                <button type="submit">提交</button>
+                <button type="submit" id="submit">提交</button>
             </form>
             <div id="result"></div>
         </div>

@@ -8,6 +8,8 @@ async function submitTaskForm() {
     const usernames = usernamesTextarea.value.split('\n').map(name => name.trim()).filter(name => name !== '');
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = '';
+    const submitButton = document.getElementById('submit');
+    submitButton.disabled = true;
     
     if (!taskName || !startTime || !endTime || !description || !hours || usernames.length === 0) {
         const errorMessage = document.createElement('p');
@@ -49,5 +51,6 @@ async function submitTaskForm() {
         errorMessage.textContent = `添加任务时发生错误：${data.error}`;
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
     }
 }

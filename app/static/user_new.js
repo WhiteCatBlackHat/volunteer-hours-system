@@ -3,6 +3,8 @@ async function submitUserForm() {
     const usernames = usernameTextarea.value.split('\n').map(name => name.trim()).filter(name => name !== '');
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = '';
+    const submitButton = document.getElementById('submit');
+    submitButton.disabled = true;
 
     if (usernames.length === 0) {
         const errorMessage = document.createElement('p');
@@ -38,10 +40,13 @@ async function submitUserForm() {
         successMessage.classList.add('success-message');
         resultDiv.appendChild(successMessage);
         setTimeout(() => { window.location.href = '/'; }, 1000);
-    } else if (hasOk) {
-        const partialSuccessMessage = document.createElement('p');
-        partialSuccessMessage.textContent = '部分参与者添加成功，请查看上方错误信息。';
-        partialSuccessMessage.classList.add('success-message');
-        resultDiv.appendChild(partialSuccessMessage);
+    } else {
+        submitButton.disabled = false;
+        if (hasOk) {
+            const partialSuccessMessage = document.createElement('p');
+            partialSuccessMessage.textContent = '部分参与者添加成功，请查看上方错误信息。';
+            partialSuccessMessage.classList.add('success-message');
+            resultDiv.appendChild(partialSuccessMessage);
+        }
     }
 }

@@ -3,6 +3,8 @@ async function submitEditUserForm() {
     const originalUsername = document.getElementById('edit-user-form').dataset.originalUsername;
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = '';
+    const submitButton = document.getElementById('submit');
+    submitButton.disabled = true;
     
     if (!newUsername || newUsername === originalUsername) {
         const errorMessage = document.createElement('p');
@@ -27,5 +29,6 @@ async function submitEditUserForm() {
         errorMessage.textContent = data.error || '更新参与者信息时发生错误。';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
     }
 }
