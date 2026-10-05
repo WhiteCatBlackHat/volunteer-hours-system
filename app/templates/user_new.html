@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>新建参与者 - 开发组任务登记及志愿时长分配系统</title>
+    <script src="{{ url_for('static', filename='user_new.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>开发组任务登记及志愿时长分配系统</h1>
+    <div class="body">
+        <div class="container">
+            <div class="container-header">
+                <h2>新建参与者</h2>
+                <a href="/">返回首页</a>
+            </div>
+            <form id="user-form" onsubmit="submitUserForm(); return false;">
+                <label for="username">参与者名（每行一个）：</label>
+                <textarea id="username" name="username" rows="5"></textarea>
+                <button type="submit">提交</button>
+            </form>
+            <div id="result"></div>
+        </div>
+    </div>
+</body>
+</html>

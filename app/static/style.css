@@ -7,33 +7,77 @@ h1 {
     justify-content: center;
 }
 .container {
-    width: 400px;
+    min-width: 400px;
     border: 2px solid #ccc;
     border-radius: 5px;
     padding: 20px;
     margin: 15px;
-}
-.container h2 {
-    margin: 0;
 }
 .container-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+.container :first-child {
+    margin-top: 0;
+}
+h2 {
+    margin-bottom: 0;
+    text-align: justify;
+}
 ul {
+    margin: 0;
+    margin-top: 20px;
     padding-left: 20px;
+}
+li {
+    margin-bottom: 5px;
 }
 a {
     text-decoration: none;
     color: #007BFF;
 }
 a:hover {
-    text-decoration: underline;
-}
-ul a {
-    text-decoration: underline;
-}
-ul a:hover {
     color: #0056b3;
+}
+.edit-btn {
+    color: black;
+    background-color: #eee;
+    font-size: 0.9em;
+    padding: 1px 7px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+}
+.edit-btn:hover {
+    color: black;
+    background-color: #ddd;
+}
+form {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 10px 0 8px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: vertical;
+}
+.error-message {
+    color: red;
+    font-size: 0.9em;
+    margin: 0;
+    margin-bottom: 10px;
+}
+.success-message {
+    color: green;
+    font-size: 0.9em;
+    margin: 0;
+    margin-bottom: 10px;
+}
+#result {
+    margin-top: 20px;
+    margin-bottom: 0;
 }

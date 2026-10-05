@@ -2,13 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>开发组任务登记及志愿时长分配系统</title>
+    <title>首页 - 开发组任务登记及志愿时长分配系统</title>
     <script src="{{ url_for('static', filename='home.js') }}"></script>
+    <script src="{{ url_for('static', filename='delete_button.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>开发组任务登记及志愿时长分配系统</h1>
-    <div class="body">
+    <div class="body" id="homepage">
         <div class="container" id="task-container">
             <div class="container-header">
                 <h2>任务列表</h2>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.username }} - 开发组任务登记及志愿时长分配系统</title>
+    <script src="{{ url_for('static', filename='user.js') }}"></script>
+    <script src="{{ url_for('static', filename='delete_button.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>开发组任务登记及志愿时长分配系统</h1>
+    <div class="body">
+        <div class="container">
+            <div class="container-header">
+                <h2>{{ user.username }} 的志愿活动详情</h2>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <div>
+                    <a href="/">返回首页</a>&nbsp;
+                    <a href="/user/edit/{{ user.username }}" class="edit-btn">编辑</a>&nbsp;
+                    <button class="delete-btn" data-username="{{ user.username }}">删除</button>
+                </div>
+            </div>
+            <p>参与者名：<span id="username" data-username="{{ user.username }}">{{ user.username }}</span></p>
+            <p>总志愿时长：<span id="total-hours">0</span> 小时</p>
+            <p>参与的活动列表：</p>
+            <ul id="task-ul"></ul>
+        </div>
+    </div>
+</body>
+</html>

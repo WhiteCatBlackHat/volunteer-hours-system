@@ -106,13 +106,18 @@ def edit_task(task_id):
     db.session.commit()
     return jsonify(task.to_dict()), 200
 
-# 获取用户列表
+# 获取参与者列表
 @main_bp.route('/user/list', methods=['GET'])
 def list_users():
     users = User.query.order_by(User.username).all()
     return jsonify([user.to_dict() for user in users])
 
-# 添加用户
+# 新建参与者页面
+@main_bp.route('/user/new')
+def new_user_page():
+    return render_template('user_new.html')
+
+# 添加参与者
 @main_bp.route('/user/add', methods=['POST'])
 def add_user():
     data = request.get_json()
@@ -132,7 +137,57 @@ def add_user():
 
     return jsonify(user.to_dict()), 201
 
-# 计算某个用户的总志愿时长
+# 删除参与者
+@main_bp.route('/user/delete/<username>', methods=['DELETE'])
+def delete_user(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'message': 'User deleted successfully'}), 200
+
+# 编辑参与者页面
+@main_bp.route('/user/edit/<username>')
+def edit_user_page(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    return render_template('user_edit.html', user=user)
+
+# 编辑参与者
+@main_bp.route('/user/edit/<username>', methods=['PUT'])
+def edit_user(username):
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'No input data provided'}), 400
+
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    new_username = data.get('new_username')
+    if new_username:
+        if User.query.filter_by(username=new_username).first():
+            return jsonify({'error': 'Username already exists'}), 400
+        user.username = new_username
+        db.session.commit()
+        return jsonify(user.to_dict()), 200
+    else:
+        return jsonify({'error': 'No new username provided'}), 400
+
+# 参与者详情页面
+@main_bp.route('/user/<username>')
+def user_detail_page(username):
+    user = User.query.filter_by(username=username).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    return render_template('user.html', user=user)
+
+# 计算某个参与者的总志愿时长
 @main_bp.route('/user/<username>/total_hours', methods=['GET'])
 def total_hours(username):
     user = User.query.filter_by(username=username).first()
