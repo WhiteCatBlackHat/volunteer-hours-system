@@ -2,6 +2,7 @@ from datetime import datetime
 from .models import Task, User, task_users
 from flask import Blueprint, render_template, jsonify, request, current_app
 from .extentions import db
+from .validate import validate_name
 
 main_bp = Blueprint('main', __name__)
 
@@ -44,6 +45,17 @@ def add_task():
 
     if not all([name, start_time_str, end_time_str, hours]):
         return jsonify({'error': 'Missing required fields'}), 400
+    
+    err = validate_name(name, '任务名称')
+    if err:
+        return jsonify({'error': err}), 400
+    err = validate_name(description, '任务描述')
+    if err:
+        return jsonify({'error': err}), 400
+    for username in usernames:
+        err = validate_name(username, '参与者名称')
+        if err:
+            return jsonify({'error': err}), 400
 
     try:
         start_time = datetime.fromisoformat(start_time_str)
@@ -96,8 +108,12 @@ def edit_task(task_id):
     if not task:
         return jsonify({'error': 'Task not found'}), 404
 
-    task.name = data.get('name', task.name)
-    task.description = data.get('description', task.description)
+    if 'name' in data:
+        name = data.get('name', task.name)
+        err = validate_name(name, '任务名称')
+        if err:
+            return jsonify({'error': err}), 400
+        task.name = name
 
     if 'start_time' in data:
         try:
@@ -105,24 +121,33 @@ def edit_task(task_id):
         except ValueError:
             return jsonify({'error': 'Invalid start_time format'}), 400
 
-    if 'usernames' in data:
-        task.users.clear()
-        for username in data['usernames']:
-            user = User.query.filter_by(username=username).first()
-            if user:
-                task.users.append(user)
-            else:
-                return jsonify({'error': f'User {username} not found'}), 404
-    db.session.commit()
-
     if 'end_time' in data:
         try:
             task.end_time = datetime.fromisoformat(data['end_time'])
         except ValueError:
             return jsonify({'error': 'Invalid end_time format'}), 400
 
+    if 'description' in data:
+        description = data.get('description', task.description)
+        err = validate_name(description, '任务描述')
+        if err:
+            return jsonify({'error': err}), 400
+        task.description = description
+
     if 'hours' in data:
         task.hours = data['hours']
+
+    if 'usernames' in data:
+        task.users.clear()
+        for username in data['usernames']:
+            user = User.query.filter_by(username=username).first()
+            err = validate_name(username, '参与者名称')
+            if err:
+                return jsonify({'error': err}), 400
+            if user:
+                task.users.append(user)
+            else:
+                return jsonify({'error': f'User {username} not found'}), 404
 
     db.session.commit()
     return jsonify(task.to_dict()), 200
@@ -148,6 +173,10 @@ def add_user():
     username = data.get('username')
     if not username:
         return jsonify({'error': 'Missing required field: username'}), 400
+    
+    err = validate_name(username, '参与者名称')
+    if err:
+        return jsonify({'error': err}), 400
 
     if User.query.filter_by(username=username).first():
         return jsonify({'error': 'Username already exists'}), 400
@@ -193,6 +222,10 @@ def edit_user(username):
     if new_username:
         if User.query.filter_by(username=new_username).first():
             return jsonify({'error': 'Username already exists'}), 400
+        err = validate_name(new_username, '参与者名称')
+        if err:
+            return jsonify({'error': err}), 400
+        
         user.username = new_username
         db.session.commit()
         return jsonify(user.to_dict()), 200
