@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>新建任务 - 开发组任务登记及志愿时长分配系统</title>
+    <script src="{{ url_for('static', filename='task_new.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <h1>开发组任务登记及志愿时长分配系统</h1>
+    <div class="body">
+        <div class="container" id="task-container">
+            <div class="container-header">
+                <h2>新建任务</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/">返回首页</a>
+            </div>
+            <form id="task-form" onsubmit="submitTaskForm(); return false;">
+                <p>
+                    <label for="task-name">任务名：</label>
+                    <input type="text" id="task-name" name="task_name">
+                </p>
+                <p>
+                    <label for="task-hours">志愿时长（小时）：</label>
+                    <input type="number" id="task-hours" name="task_hours" min="0" step="0.1">
+                </p>
+                <p>
+                    <label for="task-start-time">任务开始时间：</label>
+                    <input type="datetime-local" id="task-start-time" name="task_start_time">
+                </p>
+                <p>
+                    <label for="task-end-time">任务结束时间：</label>
+                    <input type="datetime-local" id="task-end-time" name="task_end_time">
+                </p>
+                <label for="task-description">任务描述：</label>
+                <textarea id="task-description" name="task_description" rows="5"></textarea>
+                <label for="username">参与者名（每行一个）：</label>
+                <textarea id="username" name="username" rows="5"></textarea>
+                <button type="submit">提交</button>
+            </form>
+            <div id="result"></div>
+        </div>
+    </div>
+</body>
+</html>

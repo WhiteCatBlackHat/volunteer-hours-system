@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>编辑参与者 - 开发组任务登记及志愿时长分配系统</title>
+    <script src="{{ url_for('static', filename='user_edit.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <h1>开发组任务登记及志愿时长分配系统</h1>
+    <div class="body">
+        <div class="container">
+            <div class="container-header">
+                <h2>编辑参与者</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/">返回首页</a>
+            </div>
+            <form id="edit-user-form" onsubmit="submitEditUserForm(); return false;" data-original-username="{{ user.username }}">
+                <label for="username">修改后的参与者名：</label>
+                <textarea id="username" name="username" rows="2" placeholder="原名：{{ user.username }}"></textarea>
+                <button type="submit">提交</button>
+            </form>
+            <div id="result"></div>
+        </div>
+    </div>
+</body>
+</html>

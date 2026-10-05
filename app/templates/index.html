@@ -2,38 +2,29 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>开发组任务登记及志愿时长分配系统</title>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <title>首页 - 开发组任务登记及志愿时长分配系统</title>
+    <script src="{{ url_for('static', filename='home.js') }}"></script>
+    <script src="{{ url_for('static', filename='delete_button.js') }}"></script>
+    <script src="{{ url_for('static', filename='format_time.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 <body>
     <h1>开发组任务登记及志愿时长分配系统</h1>
-    <div class="body">
+    <div class="body" id="homepage">
         <div class="container" id="task-container">
-            <h2>任务登记</h2>
-            <ul>
-            {% for task in tasks %}
-                <li>
-                    <p><span>{{ task.name }}</span> <button class="edit-btn" data-task-id="{{ task.id }}">编辑</button> <button class="delete-btn" data-task-id="{{ task.id }}" data-task-name="{{ task.name }}">删除</button></p>
-                    <p>任务时间：<span>{{ task.start_time }}</span> ~ <span>{{ task.end_time }}</span></p>
-                    <p>任务内容：<span>{{ task.description }}</span></p>
-                    <p>志愿时长：<span>{{ task.hours }}</span> 小时</p>
-                    <p>参与人员：<span>{{ '、'.join(task.users) }}</span></p>
-                </li>
-            {% else %}
-                <li>暂无任务</li>
-            {% endfor %}
-            </ul>
+            <div class="container-header">
+                <h2>任务列表</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/task/new" class="add-btn" id="add-task-btn">新建任务</a>
+            </div>
+            <ul id="task-ul"></ul>
         </div>
         <div class="container" id="status-container">
-            <h2>志愿时长统计</h2>
-            <ul>
-            {% for user, hours in status.items() %}
-                <li><a href="/user/{{ user }}">{{ user }}</a>：<span>{{ hours }}</span> 小时</li>
-            {% else %}
-                <li>暂无志愿时长统计</li>
-            {% endfor %}
-            </ul>
+            <div class="container-header">
+                <h2>志愿时长统计</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="/user/new" class="add-btn" id="add-user-btn">新建参与者</a>
+            </div>
+            <ul id="status-ul"></ul>
         </div>
     </div>
 </body>
