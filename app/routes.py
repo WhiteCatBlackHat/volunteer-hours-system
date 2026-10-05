@@ -1,7 +1,7 @@
 from datetime import datetime
 from .models import Task, User, task_users
 from flask import Blueprint, render_template, jsonify, request, current_app
-from .extentions import db
+from .extensions import db
 from .validate import validate_name
 
 main_bp = Blueprint('main', __name__)
@@ -80,7 +80,7 @@ def add_task():
 # 删除任务
 @main_bp.route('/task/delete/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    task = Task.query.get(task_id)
+    task = db.session.get(Task, task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
 

@@ -221,3 +221,4 @@ __marimo__/
 *.db
 *.sqlite
 *.sqlite3
+migrations/versions/*.pyc
