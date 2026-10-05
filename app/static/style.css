@@ -7,11 +7,14 @@ h1 {
     justify-content: center;
 }
 .container {
-    min-width: 400px;
+    max-width: 800px;
     border: 2px solid #ccc;
     border-radius: 5px;
     padding: 20px;
     margin: 15px;
+}
+#homepage .container {
+    max-width: 600px;
 }
 .container-header {
     display: flex;
@@ -24,6 +27,7 @@ h1 {
 h2 {
     margin-bottom: 0;
     text-align: justify;
+    flex: 1;
 }
 ul {
     margin: 0;

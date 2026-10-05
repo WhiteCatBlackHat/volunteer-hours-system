@@ -23,6 +23,11 @@ def list_tasks():
     tasks = Task.query.order_by(Task.start_time.desc()).all()
     return jsonify([task.to_dict() for task in tasks])
 
+# 新建任务页面
+@main_bp.route('/task/new')
+def new_task_page():
+    return render_template('task_new.html')
+
 # 添加任务
 @main_bp.route('/task/add', methods=['POST'])
 def add_task():
@@ -71,6 +76,15 @@ def delete_task(task_id):
     db.session.commit()
     return jsonify({'message': 'Task deleted successfully'}), 200
 
+# 编辑任务页面
+@main_bp.route('/task/edit/<int:task_id>')
+def edit_task_page(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({'error': 'Task not found'}), 404
+
+    return render_template('task_edit.html', task=task)
+
 # 编辑任务
 @main_bp.route('/task/edit/<int:task_id>', methods=['PUT'])
 def edit_task(task_id):
@@ -82,16 +96,24 @@ def edit_task(task_id):
     if not task:
         return jsonify({'error': 'Task not found'}), 404
 
-    # Update task fields
     task.name = data.get('name', task.name)
     task.description = data.get('description', task.description)
 
-    # Update time fields if provided
     if 'start_time' in data:
         try:
             task.start_time = datetime.fromisoformat(data['start_time'])
         except ValueError:
             return jsonify({'error': 'Invalid start_time format'}), 400
+
+    if 'usernames' in data:
+        task.users.clear()
+        for username in data['usernames']:
+            user = User.query.filter_by(username=username).first()
+            if user:
+                task.users.append(user)
+            else:
+                return jsonify({'error': f'User {username} not found'}), 404
+    db.session.commit()
 
     if 'end_time' in data:
         try:
@@ -99,7 +121,6 @@ def edit_task(task_id):
         except ValueError:
             return jsonify({'error': 'Invalid end_time format'}), 400
 
-    # Update hours if provided
     if 'hours' in data:
         task.hours = data['hours']
 

@@ -4,3 +4,9 @@ function deleteUser(username) {
         location.href = '/';
     }
 }
+function deleteTask(taskId, taskName) {
+    if (confirm(`确定要删除任务 ${taskName} 吗？`)) {
+        fetch(`/task/delete/${taskId}`, { method: 'DELETE' });
+        location.href = '/';
+    }
+}

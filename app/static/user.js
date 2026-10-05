@@ -13,8 +13,8 @@ async function loadUserDetails(username) {
     userTasks.forEach(task => {
         const li = document.createElement('li');
         li.innerHTML = `
-            <p><span>${task.name}</span> <a href="/task/edit/${task.id}" class="edit-btn">编辑</a></p>
-            <p>任务时间：<span>${task.start_time}</span> ~ <span>${task.end_time}</span></p>
+            <p><span>${task.name}</span></p>
+            <p>任务时间：<span>${formatDateTime(task.start_time)}</span> ~ <span>${formatDateTime(task.end_time)}</span></p>
             <p>任务内容：<span>${task.description}</span></p>
             <p>志愿时长：<span>${task.hours}</span> 小时</p>
         `;

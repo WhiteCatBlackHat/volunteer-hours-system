@@ -6,12 +6,13 @@ async function init() {
     tasks.forEach(task => {
         const li = document.createElement('li');
         li.innerHTML = `
-            <p><span>${task.name}</span> <a href="/task/edit/${task.id}" class="edit-btn">编辑</a> <button class="delete-btn" data-task-id="${task.id}" data-task-name="${task.name}">删除</button></p>
-            <p>任务时间：<span>${task.start_time}</span> ~ <span>${task.end_time}</span></p>
+            <p><span>${task.name}</span> <a href="/task/edit/${task.id}" class="edit-btn">编辑</a>&nbsp;<button class="delete-btn" data-task-id="${task.id}" data-task-name="${task.name}">删除</button></p>
+            <p>任务时间：<span>${formatDateTime(task.start_time)}</span> ~ <span>${formatDateTime(task.end_time)}</span></p>
             <p>任务内容：<span>${task.description}</span></p>
             <p>志愿时长：<span>${task.hours}</span> 小时</p>
             <p>参与人员：<span>${task.users.join('、')}</span></p>
         `;
+        li.querySelector('.delete-btn').addEventListener('click', () => { deleteTask(task.id, task.name); });
         taskUl.appendChild(li);
     });
     if (tasks.length === 0) {
@@ -32,7 +33,7 @@ async function init() {
     users.forEach(user => {
         const li = document.createElement('li');
         fetchUserHours(user).then(hours => {
-            li.innerHTML = `<a href="/user/${user.username}">${user.username}</a>：<span>${hours}</span> 小时 <a href="/user/edit/${user.username}" class="edit-btn">编辑</a> <button class="delete-btn" data-username="${user.username}">删除</button>`;
+            li.innerHTML = `<a href="/user/${user.username}">${user.username}</a>：<span>${hours}</span> 小时 <a href="/user/edit/${user.username}" class="edit-btn">编辑</a>&nbsp;<button class="delete-btn" data-username="${user.username}">删除</button>`;
             statusUl.appendChild(li);
             li.querySelector('.delete-btn').addEventListener('click', () => { deleteUser(user.username); });
         });
