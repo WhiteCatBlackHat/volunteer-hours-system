@@ -18,6 +18,11 @@
                 <p>{{ form.remember() }} {{ form.remember.label }}</p>
                 <p>{{ form.submit() }}</p>
             </form>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, msg in messages %}
+                    <div class="flash flash-{{ category }}">{{ msg }}</div>
+                {% endfor %}
+            {% endwith %}
         </div>
     </div>
 </div>

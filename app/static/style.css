@@ -90,20 +90,24 @@ a:hover {
     color: #ccc;
     background-color: #b71c1c;
 }
-.topbar-btn, .add-btn, button[type="submit"] {
+.topbar-btn, .add-btn, button[type="submit"], input[type="submit"] {
     padding: 4px 12px;
     background-color: #4a90d9;
     color: #fff;
     text-decoration: none;
     border-radius: 4px;
 }
-.topbar-btn:hover, .add-btn:hover, button[type="submit"]:hover {
+.topbar-btn:hover, .add-btn:hover, button[type="submit"]:hover, input[type="submit"]:hover {
     color: #ccc;
     background-color: #357ab8;
 }
-.topbar-btn:disabled, .add-btn:disabled, button[type="submit"]:disabled {
+.topbar-btn:disabled, .add-btn:disabled, button[type="submit"]:disabled, input[type="submit"]:disabled {
     color: #fff;
     background-color: #99c2ee;
+}
+button[type="submit"], input[type="submit"] {
+    margin: 10px 0 0;
+    border: none;
 }
 form {
     margin-top: 20px;
@@ -152,13 +156,17 @@ textarea {
 .greeting {
     margin: 0 10px;
 }
-button[type="submit"] {
-    background-color: #4a90d9;
-    color: #fff;
-    margin: 10px 0 0;
-    padding: 4px 12px;
-    border-radius: 4px;
-    border: none;
+.flash-success {
+    color: green;
+}
+.flash-info {
+    color: #2f80b9;
+}
+.flash-warning {
+    color: #ffaa18;
+}
+.flash-danger, .flash-error {
+    color: red;
 }
 @media (max-width: 600px) {
     .body {
