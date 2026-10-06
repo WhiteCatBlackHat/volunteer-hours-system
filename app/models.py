@@ -1,4 +1,4 @@
-from .extentions import db
+from .extensions import db
 from datetime import datetime
 
 # 关联表：User和Task之间的多对多关系
