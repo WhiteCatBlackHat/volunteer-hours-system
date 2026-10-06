@@ -8,7 +8,7 @@ async function submitUserForm() {
 
     if (usernames.length === 0) {
         const errorMessage = document.createElement('p');
-        errorMessage.textContent = '请填写至少一个参与者名。';
+        errorMessage.textContent = '添加参与者时发生错误：请填写至少一个参与者名。';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
         return;
@@ -40,6 +40,7 @@ async function submitUserForm() {
         successMessage.textContent = '参与者添加成功！';
         successMessage.classList.add('success-message');
         resultDiv.appendChild(successMessage);
+        if(window.clearUnsavedChanges) window.clearUnsavedChanges();
         setTimeout(() => { window.location.href = '/'; }, 1000);
     } else {
         submitButton.disabled = false;

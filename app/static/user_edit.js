@@ -8,7 +8,7 @@ async function submitEditUserForm() {
     
     if (!newUsername || newUsername === originalUsername) {
         const errorMessage = document.createElement('p');
-        errorMessage.textContent = '请填写一个新的参与者名。';
+        errorMessage.textContent = '编辑参与者信息时发生错误：请填写一个新的参与者名。';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
         return;
@@ -28,7 +28,7 @@ async function submitEditUserForm() {
         setTimeout(() => { window.location.href = '/'; }, 1000);
     } else {
         const errorMessage = document.createElement('p');
-        errorMessage.textContent = data.error || '更新参与者信息时发生错误。';
+        errorMessage.textContent = `编辑参与者信息时发生错误：${data.error}`;
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
         submitButton.disabled = false;

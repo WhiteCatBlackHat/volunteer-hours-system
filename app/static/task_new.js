@@ -13,16 +13,18 @@ async function submitTaskForm() {
     
     if (!taskName || !startTime || !endTime || !description || !hours || usernames.length === 0) {
         const errorMessage = document.createElement('p');
-        errorMessage.textContent = '请填写所有字段，包括至少一个参与者。';
+        errorMessage.textContent = '添加任务时发生错误：请填写所有字段，包括至少一个参与者。';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
         return;
     }
     if (startTime >= endTime) {
         const errorMessage = document.createElement('p');
-        errorMessage.textContent = '开始时间必须早于结束时间。';
+        errorMessage.textContent = '添加任务时发生错误：开始时间必须早于结束时间。';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
         return;
     }
     
@@ -46,6 +48,7 @@ async function submitTaskForm() {
         successMessage.textContent = '任务添加成功！';
         successMessage.classList.add('success-message');
         resultDiv.appendChild(successMessage);
+        if(window.clearUnsavedChanges) window.clearUnsavedChanges();
         setTimeout(() => { window.location.href = '/'; }, 1000);
     } else {
         const errorMessage = document.createElement('p');
