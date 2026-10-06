@@ -29,6 +29,7 @@ async function submitTaskForm() {
     const res = await fetch('/task/add', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: "same-origin",
         body: JSON.stringify({
             name: taskName,
             start_time: startTime,

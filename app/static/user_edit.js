@@ -17,12 +17,14 @@ async function submitEditUserForm() {
     const res = await fetch(`/user/edit/${originalUsername}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: "same-origin",
         body: JSON.stringify({ new_username: newUsername })
     });
     
     const data = await res.json();
     if (res.ok) {
         resultDiv.innerHTML = '<p class="success-message">参与者信息更新成功！</p>';
+        if(window.clearUnsavedChanges) window.clearUnsavedChanges();
         setTimeout(() => { window.location.href = '/'; }, 1000);
     } else {
         const errorMessage = document.createElement('p');

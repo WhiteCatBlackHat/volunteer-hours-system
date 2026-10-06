@@ -31,6 +31,7 @@ async function submitTaskForm() {
     const res = await fetch(`/task/edit/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
+        credentials: "same-origin",
         body: JSON.stringify({
             name: taskName,
             start_time: startTime,
@@ -47,6 +48,7 @@ async function submitTaskForm() {
         successMessage.textContent = '任务编辑成功！';
         successMessage.classList.add('success-message');
         resultDiv.appendChild(successMessage);
+        if(window.clearUnsavedChanges) window.clearUnsavedChanges();
         setTimeout(() => { window.location.href = '/'; }, 1000);
     } else {
         const errorMessage = document.createElement('p');

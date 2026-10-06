@@ -1,19 +1,28 @@
-function init() {
-    const forms = document.querySelector('form');
-    if (!forms) return;
-    
-    window.hasUnsavedChanges = false;
-    function trackChanges(ele) {
-        ele.addEventListener('input', () => { hasUnsavedChanges = true; });
-        ele.addEventListener('change', () => { hasUnsavedChanges = true; });
+(function () {
+    function init() {
+        const form = document.querySelector('form');
+        if (!form) return;
+
+        window.hasUnsavedChanges = false;
+
+        function trackChanges(ele) {
+            ele.addEventListener('input', () => { window.hasUnsavedChanges = true; });
+            ele.addEventListener('change', () => { window.hasUnsavedChanges = true; });
+        }
+        form.querySelectorAll('input, textarea, select').forEach(trackChanges);
+
+        window.addEventListener('beforeunload', (e) => {
+            if (!window.hasUnsavedChanges) return;
+            e.preventDefault();
+            e.returnValue = '';
+            return '';
+        });
+
+        // 暴露给其他脚本
+        window.clearUnsavedChanges = function () {
+            window.hasUnsavedChanges = false;
+        };
     }
-    forms.querySelectorAll('input, textarea, select').forEach(trackChanges);
-    
-    window.addEventListener('beforeunload', (e) => {
-        if (!hasUnsavedChanges) return;
-        e.preventDefault();
-        e.returnValue = '';
-        return '';
-    });
-}
-document.addEventListener('DOMContentLoaded', init);
+
+    document.addEventListener('DOMContentLoaded', init);
+})();

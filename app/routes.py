@@ -3,6 +3,7 @@ from .models import Task, User, task_users
 from flask import Blueprint, render_template, jsonify, request, current_app
 from .extensions import db
 from .validate import validate_name
+from .utils.decorators import admin_required
 
 main_bp = Blueprint('main', __name__)
 
@@ -31,6 +32,7 @@ def new_task_page():
 
 # 添加任务
 @main_bp.route('/task/add', methods=['POST'])
+@admin_required
 def add_task():
     data = request.get_json()
     if not data:
@@ -79,6 +81,7 @@ def add_task():
 
 # 删除任务
 @main_bp.route('/task/delete/<int:task_id>', methods=['DELETE'])
+@admin_required
 def delete_task(task_id):
     task = db.session.get(Task, task_id)
     if not task:
@@ -99,6 +102,7 @@ def edit_task_page(task_id):
 
 # 编辑任务
 @main_bp.route('/task/edit/<int:task_id>', methods=['PUT'])
+@admin_required
 def edit_task(task_id):
     data = request.get_json()
     if not data:
@@ -165,6 +169,7 @@ def new_user_page():
 
 # 添加参与者
 @main_bp.route('/user/add', methods=['POST'])
+@admin_required
 def add_user():
     data = request.get_json()
     if not data:
@@ -209,6 +214,7 @@ def edit_user_page(username):
 
 # 编辑参与者
 @main_bp.route('/user/edit/<username>', methods=['PUT'])
+@admin_required
 def edit_user(username):
     data = request.get_json()
     if not data:

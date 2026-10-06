@@ -20,6 +20,7 @@ async function submitUserForm() {
         const res = await fetch('/user/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: "same-origin",
             body: JSON.stringify({ username: username })
         });
         if (!res.ok) {
