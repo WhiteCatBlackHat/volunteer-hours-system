@@ -85,3 +85,14 @@ textarea {
     margin-top: 20px;
     margin-bottom: 0;
 }
+@media (max-width: 600px) {
+    .body {
+        flex-direction: column;
+    }
+    .container {
+        max-width: 100%;
+    }
+    .container-header {
+        flex-direction: column;
+    }
+}
