@@ -88,6 +88,10 @@ $env:FLASK_APP = "app.py"
 ```bash
 flask create-admin
 ```
+运行以下命令并根据提示操作以封禁管理员：
+```bash
+flask ban
+```
 
 ## 团队
 

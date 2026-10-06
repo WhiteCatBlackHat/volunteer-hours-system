@@ -1,8 +1,9 @@
-from flask import Flask, redirect, url_for, request, jsonify
+from flask import Flask, redirect, url_for, request, jsonify, flash
 from .extensions import db, migrate, login_manager, csrf
 from . import models
 from flask_login import current_user
 import click
+from flask_login import logout_user
 
 def register_cli(app: Flask):
     @app.cli.command("create-admin")
@@ -19,6 +20,21 @@ def register_cli(app: Flask):
         db.session.add(a)
         db.session.commit()
         click.echo(f"管理员 {username} 已创建")
+        
+    @app.cli.command("ban")
+    @click.option("--username", prompt=True)
+    def ban(username):
+        from .models import Admin
+        admin = Admin.query.filter_by(username=username).first()
+        if not admin:
+            click.echo("管理员未找到")
+            return
+        admin.is_active_flag = not admin.is_active_flag
+        db.session.commit()
+        if admin.is_active_flag:
+            click.echo(f"已解封管理员 {username}")
+        else:
+            click.echo(f"已封禁管理员 {username}")
 
 def register_extensions(app: Flask):
     db.init_app(app)
@@ -50,6 +66,11 @@ def create_app(config_object='config.Config'):
     # 全局登录闸门
     @app.before_request
     def require_login_for_writes():
+        if current_user.is_authenticated and not current_user.is_active:
+            logout_user()
+            flash("你的账号已被禁用", "warning")
+            return redirect(url_for("auth.login"))
+        
         if request.method not in ("POST", "PUT", "DELETE", "PATCH"):
             return
         allow = {"auth.login", "static"}
