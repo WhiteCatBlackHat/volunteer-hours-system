@@ -27,6 +27,7 @@ def list_tasks():
 
 # 新建任务页面
 @main_bp.route('/task/new')
+@admin_required
 def new_task_page():
     return render_template('task_new.html')
 
@@ -93,6 +94,7 @@ def delete_task(task_id):
 
 # 编辑任务页面
 @main_bp.route('/task/edit/<int:task_id>')
+@admin_required
 def edit_task_page(task_id):
     task = db.session.get(Task, task_id)
     if not task:
@@ -164,6 +166,7 @@ def list_users():
 
 # 新建参与者页面
 @main_bp.route('/user/new')
+@admin_required
 def new_user_page():
     return render_template('user_new.html')
 
@@ -205,6 +208,7 @@ def delete_user(username):
 
 # 编辑参与者页面
 @main_bp.route('/user/edit/<username>')
+@admin_required
 def edit_user_page(username):
     user = User.query.filter_by(username=username).first()
     if not user:
