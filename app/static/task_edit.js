@@ -10,6 +10,7 @@ async function submitTaskForm() {
     const usernames = usernamesTextarea.value.split('\n').map(name => name.trim()).filter(name => name !== '');
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = '';
+    resultDiv.hidden = false;
     const submitButton = document.getElementById('submit');
     submitButton.disabled = true;
     
@@ -60,3 +61,5 @@ async function submitTaskForm() {
         submitButton.disabled = false;
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => { document.getElementById('result').hidden = true; });

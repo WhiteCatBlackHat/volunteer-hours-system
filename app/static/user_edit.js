@@ -3,6 +3,7 @@ async function submitEditUserForm() {
     const originalUsername = document.getElementById('edit-user-form').dataset.originalUsername;
     const resultDiv = document.getElementById('result');
     resultDiv.innerHTML = '';
+    resultDiv.hidden = false;
     const submitButton = document.getElementById('submit');
     submitButton.disabled = true;
     
@@ -34,3 +35,5 @@ async function submitEditUserForm() {
         submitButton.disabled = false;
     }
 }
+
+document.addEventListener('DOMContentLoaded', () => { document.getElementById('result').hidden = true; });

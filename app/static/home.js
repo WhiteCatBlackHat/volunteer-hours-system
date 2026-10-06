@@ -10,7 +10,7 @@ async function init() {
             <p>任务时间：<span>${formatDateTime(task.start_time)}</span> ~ <span>${formatDateTime(task.end_time)}</span></p>
             <p>任务内容：<span>${task.description}</span></p>
             <p>志愿时长：<span>${task.hours}</span> 小时</p>
-            <p>参与人员：<span>${task.users.join('、')}</span></p>
+            <p>参与人员：<span>${task.users.map(user => `<a href="/user/${user}">${user}</a>`).join('、')}</span></p>
         `;
         li.querySelector('.delete-btn').addEventListener('click', () => { deleteTask(task.id, task.name); });
         taskUl.appendChild(li);

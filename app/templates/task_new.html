@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>新建任务 - 开发组任务登记及志愿时长分配系统</title>
-    <script src="{{ url_for('static', filename='task_new.js') }}"></script>
-    <script src="{{ url_for('static', filename='warning_unsaved.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<body>
-    <h1>开发组任务登记及志愿时长分配系统</h1>
+{% extends "base.html" %}
+
+{% block title %}新建任务 - 开发组任务登记及志愿时长分配系统{% endblock %}
+
+{% block content %}
     <div class="body">
         <div class="container" id="task-container">
             <div class="container-header">
-                <h2>新建任务</h2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a href="/">返回首页</a>
+                <h2>新建任务</h2>
             </div>
             <form id="task-form" onsubmit="submitTaskForm(); return false;">
                 <p>
@@ -42,5 +34,9 @@
             <div id="result"></div>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='task_new.js') }}"></script>
+    <script src="{{ url_for('static', filename='warning_unsaved.js') }}"></script>
+{% endblock %}
