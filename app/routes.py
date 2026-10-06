@@ -91,7 +91,7 @@ def delete_task(task_id):
 # 编辑任务页面
 @main_bp.route('/task/edit/<int:task_id>')
 def edit_task_page(task_id):
-    task = Task.query.get(task_id)
+    task = db.session.get(Task, task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
 
@@ -104,7 +104,7 @@ def edit_task(task_id):
     if not data:
         return jsonify({'error': 'No input data provided'}), 400
 
-    task = Task.query.get(task_id)
+    task = db.session.get(Task, task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
 
