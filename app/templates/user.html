@@ -1,23 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{{ user.username }} - 开发组任务登记及志愿时长分配系统</title>
-    <script src="{{ url_for('static', filename='user.js') }}"></script>
-    <script src="{{ url_for('static', filename='delete_button.js') }}"></script>
-    <script src="{{ url_for('static', filename='format_time.js') }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
-</head>
-<body>
-    <h1>开发组任务登记及志愿时长分配系统</h1>
+{% extends "base.html" %}
+
+{% block title %}{{ user.username }} - 开发组任务登记及志愿时长分配系统{% endblock %}
+
+{% block content %}
     <div class="body">
         <div class="container">
             <div class="container-header">
                 <h2>{{ user.username }} 的志愿活动详情</h2>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <div>
-                    <a href="/">返回首页</a>&nbsp;
                     <a href="/user/edit/{{ user.username }}" class="edit-btn">编辑</a>&nbsp;
                     <button class="delete-btn" data-username="{{ user.username }}">删除</button>
                 </div>
@@ -28,5 +18,10 @@
             <ul id="task-ul"></ul>
         </div>
     </div>
-</body>
-</html>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='user.js') }}"></script>
+    <script src="{{ url_for('static', filename='delete_button.js') }}"></script>
+    <script src="{{ url_for('static', filename='format_time.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}开发组任务登记及志愿时长分配系统{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="topbar">
+        <a href="/">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='favicon.ico') }}" alt="logo" height="32" width="32">
+                开发组任务登记及志愿时长分配系统
+            </div>
+        </a>
+        <div class="user-auth">
+            {% if current_user.is_authenticated %}
+                <span class="greeting">你好，{{ current_user.username }}</span>
+                <a href="{{ url_for('auth.logout') }}" class="topbar-btn">退出登录</a>
+            {% else %}
+                <a href="{{ url_for('auth.login') }}" class="topbar-btn">管理员登录</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, msg in messages %}
+            <div class="flash flash-{{ category }}">{{ msg }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
