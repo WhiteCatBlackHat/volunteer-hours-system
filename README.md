@@ -41,7 +41,7 @@ volunteer-hours-system/
 ├── migrations/                           # Alembic 迁移目录
 │   └── versions/                         # 迁移脚本
 ├── instance/                             # 运行时数据
-├── app.py                                # 开发入口
+├── dev.py                                # 开发入口
 ├── config.py                             # 配置类
 ├── entrypoint.py                         # 生产部署入口
 └── requirements.txt                      # 依赖清单
@@ -56,13 +56,13 @@ volunteer-hours-system/
 配置方法（Windows PowerShell）：
 
 ```bash
-$env:FLASK_APP = "app.py"
+$env:FLASK_APP = "dev.py"
 ```
 
 配置方法（Linux Bash）：
 
 ```bash
-export FLASK_APP="app.py"
+export FLASK_APP="dev.py"
 ```
 
 ### 运行方法
@@ -73,7 +73,7 @@ cd volunteer-hours-system
 pip install -r requirements.txt
 flask db upgrade
 flask create-admin  # 首次使用前需创建管理员账号
-python app.py
+python dev.py
 ```
 
 ## 服务器部署
@@ -87,7 +87,7 @@ python app.py
 配置方法（Windows PowerShell）：
 
 ```bash
-$env:FLASK_APP = "app.py"
+$env:FLASK_APP = "dev.py"
 $env:SECRET_KEY = "your_secret_key"
 $env:PORT = "5000"
 ```
@@ -95,7 +95,7 @@ $env:PORT = "5000"
 配置方法（Linux Bash）：
 
 ```bash
-export FLASK_APP="app.py"
+export FLASK_APP="dev.py"
 export SECRET_KEY="your_secret_key"
 export PORT="5000"
 ```

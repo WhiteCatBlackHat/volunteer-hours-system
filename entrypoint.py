@@ -19,7 +19,7 @@ def run_migrations():
 
         
         print("Running database migrations...", file=sys.stderr)
-        result = subprocess.run(["flask", "--app", "app.py", "db", "upgrade"], check = False)
+        result = subprocess.run(["flask", "--app", "dev.py", "db", "upgrade"], check = False)
         if result.returncode != 0:
             print("Migration failed.", file=sys.stderr)
             sys.exit(result.returncode)
@@ -30,7 +30,7 @@ def main():
     port = int(os.environ.get("PORT", 5000))
     os.execvp(
         "gunicorn",
-        ["gunicorn", "--bind", f"0.0.0.0:{port}", "app:app"]
+        ["gunicorn", "--bind", f"0.0.0.0:{port}", "dev:app"]
     )
     
 if __name__ == "__main__":
