@@ -91,5 +91,24 @@ def create_app(config_object='config.Config'):
                 }), 401
             # 普通浏览器导航请求（比如提交表单）才重定向
             return redirect(url_for("auth.login", next=request.path))
+    
+    # 处理可能遗漏的错误
+    from werkzeug.exceptions import HTTPException
+
+    @app.errorhandler(HTTPException)
+    def handle_http_exception(e):
+        # 把 Werkzeug 的 400/404/405 等转成 JSON（对 API 请求）
+        if request.path.startswith("/api/") or request.is_json or request.accept_mimetypes.best == "application/json":
+            return jsonify({"error": e.description}), e.code
+        return e
+
+    @app.errorhandler(Exception)
+    def handle_uncaught(e):
+        # 兜底：把未捕获的异常记日志，返回 500 JSON
+        app.logger.exception("未捕获异常: %s", e)
+        db.session.rollback()
+        if request.path.startswith("/api/") or request.is_json or request.accept_mimetypes.best == "application/json":
+            return jsonify({"error": "服务器内部错误"}), 500
+        raise   # 非 API 请求，仍然走默认 500 页
 
     return app

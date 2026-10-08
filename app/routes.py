@@ -2,8 +2,9 @@ from datetime import datetime
 from .models import Task, User, task_users
 from flask import Blueprint, render_template, jsonify, request, current_app
 from .extensions import db
-from .validate import validate_name
+from .validate import validate_name, validate_description, validate_hours
 from .utils.decorators import admin_required
+import re
 
 main_bp = Blueprint('main', __name__)
 
@@ -35,9 +36,9 @@ def new_task_page():
 @main_bp.route('/task/add', methods=['POST'])
 @admin_required
 def add_task():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': 'No input data provided'}), 400
+    data = request.get_json(silent=True)
+    if data is None or not isinstance(data, dict):
+        return jsonify({'error': '请提供有效的 JSON 数据'}), 400
 
     name = data.get('name')
     start_time_str = data.get('start_time')
@@ -46,13 +47,21 @@ def add_task():
     description = data.get('description', '')
     usernames = data.get('usernames', [])
 
-    if not all([name, start_time_str, end_time_str, hours]):
-        return jsonify({'error': 'Missing required fields'}), 400
+    if not name:
+        return jsonify({'error': '请提供任务名称'}), 400
+    if not start_time_str:
+        return jsonify({'error': '请提供任务开始时间'}), 400
+    if not end_time_str:
+        return jsonify({'error': '请提供任务结束时间'}), 400
+    if not hours:
+        return jsonify({'error': '请提供志愿时长'}), 400
+    if not usernames:
+        return jsonify({'error': '请至少提供一个参与者'}), 400
     
     err = validate_name(name, '任务名称')
     if err:
         return jsonify({'error': err}), 400
-    err = validate_name(description, '任务描述')
+    err = validate_description(description, '任务描述')
     if err:
         return jsonify({'error': err}), 400
     for username in usernames:
@@ -63,17 +72,24 @@ def add_task():
     try:
         start_time = datetime.fromisoformat(start_time_str)
         end_time = datetime.fromisoformat(end_time_str)
-    except ValueError:
-        return jsonify({'error': 'Invalid date format'}), 400
+    except (ValueError, TypeError):
+        return jsonify({'error': '无效的日期格式'}), 400
+    
+    err = validate_hours(hours, '志愿时长')
+    if err:
+        return jsonify({'error': err}), 400
 
     task = Task(name=name, start_time=start_time, end_time=end_time, hours=hours, description=description)
+    
+    if not isinstance(usernames, list):
+        return jsonify({'error': '参与者必须是列表'}), 400
 
     for username in usernames:
         user = User.query.filter_by(username=username).first()
         if user:
             task.users.append(user)
         else:
-            return jsonify({'error': f'User {username} not found'}), 404
+            return jsonify({'error': f'未找到参与者 {username}'}), 404
 
     db.session.add(task)
     db.session.commit()
@@ -86,11 +102,11 @@ def add_task():
 def delete_task(task_id):
     task = db.session.get(Task, task_id)
     if not task:
-        return jsonify({'error': 'Task not found'}), 404
+        return jsonify({'error': '任务未找到'}), 404
 
     db.session.delete(task)
     db.session.commit()
-    return jsonify({'message': 'Task deleted successfully'}), 200
+    return jsonify({'message': '删除任务成功！'}), 200
 
 # 编辑任务页面
 @main_bp.route('/task/edit/<int:task_id>')
@@ -98,7 +114,7 @@ def delete_task(task_id):
 def edit_task_page(task_id):
     task = db.session.get(Task, task_id)
     if not task:
-        return jsonify({'error': 'Task not found'}), 404
+        return jsonify({'error': '任务未找到'}), 404
 
     return render_template('task_edit.html', task=task)
 
@@ -107,12 +123,12 @@ def edit_task_page(task_id):
 @admin_required
 def edit_task(task_id):
     data = request.get_json()
-    if not data:
-        return jsonify({'error': 'No input data provided'}), 400
+    if data is None or not isinstance(data, dict):
+        return jsonify({'error': '请提供有效的 JSON 数据'}), 400
 
     task = db.session.get(Task, task_id)
     if not task:
-        return jsonify({'error': 'Task not found'}), 404
+        return jsonify({'error': '任务未找到'}), 404
 
     if 'name' in data:
         name = data.get('name', task.name)
@@ -124,27 +140,34 @@ def edit_task(task_id):
     if 'start_time' in data:
         try:
             task.start_time = datetime.fromisoformat(data['start_time'])
-        except ValueError:
-            return jsonify({'error': 'Invalid start_time format'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'error': '无效的开始时间格式'}), 400
 
     if 'end_time' in data:
         try:
             task.end_time = datetime.fromisoformat(data['end_time'])
-        except ValueError:
-            return jsonify({'error': 'Invalid end_time format'}), 400
+        except (ValueError, TypeError):
+            return jsonify({'error': '无效的结束时间格式'}), 400
 
     if 'description' in data:
         description = data.get('description', task.description)
-        err = validate_name(description, '任务描述')
+        err = validate_description(description, '任务描述')
         if err:
             return jsonify({'error': err}), 400
         task.description = description
-
+        
     if 'hours' in data:
+        err = validate_hours(data['hours'], '志愿时长')
+        if err:
+            return jsonify({'error': err}), 400
         task.hours = data['hours']
 
     if 'usernames' in data:
         task.users.clear()
+        if not isinstance(data['usernames'], list):
+            return jsonify({'error': '参与者必须是列表'}), 400
+        if not data['usernames']:
+            return jsonify({'error': '请至少提供一个参与者'}), 400
         for username in data['usernames']:
             user = User.query.filter_by(username=username).first()
             err = validate_name(username, '参与者名称')
@@ -153,7 +176,7 @@ def edit_task(task_id):
             if user:
                 task.users.append(user)
             else:
-                return jsonify({'error': f'User {username} not found'}), 404
+                return jsonify({'error': f'未找到参与者 {username}'}), 404
 
     db.session.commit()
     return jsonify(task.to_dict()), 200
@@ -175,19 +198,19 @@ def new_user_page():
 @admin_required
 def add_user():
     data = request.get_json()
-    if not data:
-        return jsonify({'error': 'No input data provided'}), 400
+    if data is None or not isinstance(data, dict):
+        return jsonify({'error': '请提供有效的 JSON 数据'}), 400
 
     username = data.get('username')
     if not username:
-        return jsonify({'error': 'Missing required field: username'}), 400
+        return jsonify({'error': '请提供要添加的参与者名称'}), 400
     
     err = validate_name(username, '参与者名称')
     if err:
         return jsonify({'error': err}), 400
 
     if User.query.filter_by(username=username).first():
-        return jsonify({'error': 'Username already exists'}), 400
+        return jsonify({'error': '该参与者名称已存在'}), 400
 
     user = User(username=username)
     db.session.add(user)
@@ -197,14 +220,15 @@ def add_user():
 
 # 删除参与者
 @main_bp.route('/user/delete/<username>', methods=['DELETE'])
+@admin_required
 def delete_user(username):
     user = User.query.filter_by(username=username).first()
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'error': '参与者未找到'}), 404
 
     db.session.delete(user)
     db.session.commit()
-    return jsonify({'message': 'User deleted successfully'}), 200
+    return jsonify({'message': '删除参与者成功！'}), 200
 
 # 编辑参与者页面
 @main_bp.route('/user/edit/<username>')
@@ -212,7 +236,7 @@ def delete_user(username):
 def edit_user_page(username):
     user = User.query.filter_by(username=username).first()
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'error': '参与者未找到'}), 404
 
     return render_template('user_edit.html', user=user)
 
@@ -221,17 +245,17 @@ def edit_user_page(username):
 @admin_required
 def edit_user(username):
     data = request.get_json()
-    if not data:
-        return jsonify({'error': 'No input data provided'}), 400
+    if data is None or not isinstance(data, dict):
+        return jsonify({'error': '请提供有效的 JSON 数据'}), 400
 
     user = User.query.filter_by(username=username).first()
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'error': '参与者未找到'}), 404
 
     new_username = data.get('new_username')
     if new_username:
         if User.query.filter_by(username=new_username).first():
-            return jsonify({'error': 'Username already exists'}), 400
+            return jsonify({'error': '该参与者名称已存在'}), 400
         err = validate_name(new_username, '参与者名称')
         if err:
             return jsonify({'error': err}), 400
@@ -240,14 +264,14 @@ def edit_user(username):
         db.session.commit()
         return jsonify(user.to_dict()), 200
     else:
-        return jsonify({'error': 'No new username provided'}), 400
+        return jsonify({'error': '请提供编辑后的参与者名称'}), 400
 
 # 参与者详情页面
 @main_bp.route('/user/<username>')
 def user_detail_page(username):
     user = User.query.filter_by(username=username).first()
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'error': '参与者未找到'}), 404
 
     return render_template('user.html', user=user)
 
@@ -256,7 +280,7 @@ def user_detail_page(username):
 def total_hours(username):
     user = User.query.filter_by(username=username).first()
     if not user:
-        return jsonify({'error': 'User not found'}), 404
+        return jsonify({'error': '参与者未找到'}), 404
 
     total_hours = sum(task.hours for task in user.tasks)
     return jsonify({'username': username, 'total_hours': total_hours})

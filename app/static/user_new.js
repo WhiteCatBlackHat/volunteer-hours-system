@@ -9,7 +9,7 @@ async function submitUserForm() {
 
     if (usernames.length === 0) {
         const errorMessage = document.createElement('p');
-        errorMessage.textContent = '添加参与者时发生错误：请填写至少一个参与者名。';
+        errorMessage.textContent = '添加参与者时发生错误：请填写至少一个参与者名';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
         return;
@@ -18,6 +18,14 @@ async function submitUserForm() {
     let allOk = true, hasOk = false;
 
     for (const username of usernames) { // 警示后人：forEach 不会等待 async 函数完成
+        if (username.length > 100) {
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = '添加参与者时发生错误：参与者名称长度不能超过 100 个字符';
+            errorMessage.classList.add('error-message');
+            resultDiv.appendChild(errorMessage);
+            submitButton.disabled = false;
+            return;
+        }
         const res = await fetch('/user/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -47,7 +55,7 @@ async function submitUserForm() {
         submitButton.disabled = false;
         if (hasOk) {
             const partialSuccessMessage = document.createElement('p');
-            partialSuccessMessage.textContent = '部分参与者添加成功，请查看上方错误信息。';
+            partialSuccessMessage.textContent = '部分参与者添加成功，请查看上方错误信息';
             partialSuccessMessage.classList.add('success-message');
             resultDiv.appendChild(partialSuccessMessage);
         }

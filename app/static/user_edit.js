@@ -9,9 +9,17 @@ async function submitEditUserForm() {
     
     if (!newUsername || newUsername === originalUsername) {
         const errorMessage = document.createElement('p');
-        errorMessage.textContent = '编辑参与者信息时发生错误：请填写一个新的参与者名。';
+        errorMessage.textContent = '编辑参与者信息时发生错误：请填写一个新的参与者名称';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
+        return;
+    }
+    if (newUsername.length > 100) {
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = '编辑参与者时发生错误：参与者名称长度不能超过 100 个字符';
+        errorMessage.classList.add('error-message');
+        resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
         return;
     }
     
