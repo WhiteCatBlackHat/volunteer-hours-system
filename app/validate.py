@@ -14,7 +14,7 @@ def validate_name(name, field='名称'):
         return f'{field}只能包含以下字符: 大小写字母、数字、下划线、连字符、汉字'
     return None
 
-DESCRIPTION_RE = re.compile(r'^[\w\u4e00-\u9fa5\s\-\.,;:!?()@#$%^&*+=\[\]{}|~，。、；：！？（）…—·“”‘’『』「」]+$')
+DESCRIPTION_RE = re.compile(r'^[\w\u4e00-\u9fff\s\-\.,;:!?()@#$%^&*+=\[\]{}|~，。、；：！？（）…—·“”‘’『』「」]+$')
 
 def validate_description(description, field='描述'):
     if not isinstance(description, str):
