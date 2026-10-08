@@ -65,6 +65,7 @@ a:hover {
 .logo:hover {
     background: rgba(200, 200, 200, 0.25);
     color: #555;
+    cursor: pointer;
 }
 .edit-btn {
     color: #1c8c2c;
@@ -77,6 +78,7 @@ a:hover {
 .edit-btn:hover {
     color: #ccc;
     background-color: #1c8c2c;
+    cursor: pointer;
 }
 .delete-btn { 
     color: #fff;
@@ -89,6 +91,7 @@ a:hover {
 .delete-btn:hover {
     color: #ccc;
     background-color: #b71c1c;
+    cursor: pointer;
 }
 .topbar-btn, .add-btn, button[type="submit"], input[type="submit"] {
     padding: 4px 12px;
@@ -100,6 +103,7 @@ a:hover {
 .topbar-btn:hover, .add-btn:hover, button[type="submit"]:hover, input[type="submit"]:hover {
     color: #ccc;
     background-color: #357ab8;
+    cursor: pointer;
 }
 .topbar-btn:disabled, .add-btn:disabled, button[type="submit"]:disabled, input[type="submit"]:disabled {
     color: #fff;
