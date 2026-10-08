@@ -9,7 +9,7 @@ async function submitUserForm() {
 
     if (usernames.length === 0) {
         const errorMessage = document.createElement('p');
-        errorMessage.textContent = '添加参与者时发生错误：请填写至少一个参与者名。';
+        errorMessage.textContent = '添加参与者时发生错误：请填写至少一个参与者名';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
         return;
@@ -47,7 +47,7 @@ async function submitUserForm() {
         submitButton.disabled = false;
         if (hasOk) {
             const partialSuccessMessage = document.createElement('p');
-            partialSuccessMessage.textContent = '部分参与者添加成功，请查看上方错误信息。';
+            partialSuccessMessage.textContent = '部分参与者添加成功，请查看上方错误信息';
             partialSuccessMessage.classList.add('success-message');
             resultDiv.appendChild(partialSuccessMessage);
         }
