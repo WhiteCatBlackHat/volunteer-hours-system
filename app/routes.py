@@ -54,7 +54,7 @@ def add_task():
     if not end_time_str:
         return jsonify({'error': '请提供任务结束时间'}), 400
     if not hours:
-        return jsonify({'error': '请提供任务时长'}), 400
+        return jsonify({'error': '请提供志愿时长'}), 400
     if not usernames:
         return jsonify({'error': '请至少提供一个参与者'}), 400
     
@@ -75,7 +75,7 @@ def add_task():
     except (ValueError, TypeError):
         return jsonify({'error': '无效的日期格式'}), 400
     
-    err = validate_hours(hours, '任务时长')
+    err = validate_hours(hours, '志愿时长')
     if err:
         return jsonify({'error': err}), 400
 
@@ -157,7 +157,7 @@ def edit_task(task_id):
         task.description = description
         
     if 'hours' in data:
-        err = validate_hours(data['hours'], '任务时长')
+        err = validate_hours(data['hours'], '志愿时长')
         if err:
             return jsonify({'error': err}), 400
         task.hours = data['hours']
