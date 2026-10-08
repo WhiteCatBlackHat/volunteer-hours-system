@@ -2,7 +2,7 @@ from datetime import datetime
 from .models import Task, User, task_users
 from flask import Blueprint, render_template, jsonify, request, current_app
 from .extensions import db
-from .validate import validate_name
+from .validate import validate_name, validate_description
 from .utils.decorators import admin_required
 
 main_bp = Blueprint('main', __name__)
@@ -52,7 +52,7 @@ def add_task():
     err = validate_name(name, '任务名称')
     if err:
         return jsonify({'error': err}), 400
-    err = validate_name(description, '任务描述')
+    err = validate_description(description, '任务描述')
     if err:
         return jsonify({'error': err}), 400
     for username in usernames:
@@ -135,7 +135,7 @@ def edit_task(task_id):
 
     if 'description' in data:
         description = data.get('description', task.description)
-        err = validate_name(description, '任务描述')
+        err = validate_description(description, '任务描述')
         if err:
             return jsonify({'error': err}), 400
         task.description = description
