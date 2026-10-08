@@ -92,7 +92,7 @@ def create_app(config_object='config.Config'):
             # 普通浏览器导航请求（比如提交表单）才重定向
             return redirect(url_for("auth.login", next=request.path))
     
-    # 处理可能遗漏的 500 错误
+    # 处理可能遗漏的错误
     from werkzeug.exceptions import HTTPException
 
     @app.errorhandler(HTTPException)
