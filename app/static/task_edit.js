@@ -5,7 +5,8 @@ async function submitTaskForm() {
     const startTime = document.getElementById('task-start-time').value.trim();
     const endTime = document.getElementById('task-end-time').value.trim();
     const description = document.getElementById('task-description').value.trim();
-    const hours = document.getElementById('task-hours').value.trim();
+    const hoursStr = document.getElementById('task-hours').value.trim();
+    const hours = parseFloat(hoursStr);
     const usernamesTextarea = document.getElementById('username');
     const usernames = usernamesTextarea.value.split('\n').map(name => name.trim()).filter(name => name !== '');
     const resultDiv = document.getElementById('result');
@@ -14,7 +15,7 @@ async function submitTaskForm() {
     const submitButton = document.getElementById('submit');
     submitButton.disabled = true;
     
-    if (!taskName || !startTime || !endTime || !description || !hours || usernames.length === 0) {
+    if (!taskName || !startTime || !endTime || !description || !hoursStr || usernames.length === 0) {
         const errorMessage = document.createElement('p');
         errorMessage.textContent = '编辑任务时发生错误：请填写所有字段，包括至少一个参与者';
         errorMessage.classList.add('error-message');
@@ -25,6 +26,30 @@ async function submitTaskForm() {
     if (startTime >= endTime) {
         const errorMessage = document.createElement('p');
         errorMessage.textContent = '编辑任务时发生错误：开始时间必须早于结束时间';
+        errorMessage.classList.add('error-message');
+        resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
+        return;
+    }
+    if (description.length > 1000) {
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = '编辑任务时发生错误：任务描述长度不能超过 1000 个字符';
+        errorMessage.classList.add('error-message');
+        resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
+        return;
+    }
+    if (taskName.length > 100) {
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = '编辑任务时发生错误：任务名称长度不能超过 100 个字符';
+        errorMessage.classList.add('error-message');
+        resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
+        return;
+    }
+    if (isNaN(hours) || !isFinite(hours) || hours <= 0 || hours > 10000) {
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = '编辑任务时发生错误：志愿时长必须是 10000 以内的正数';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
         submitButton.disabled = false;

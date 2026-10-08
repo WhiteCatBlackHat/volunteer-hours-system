@@ -18,6 +18,14 @@ async function submitUserForm() {
     let allOk = true, hasOk = false;
 
     for (const username of usernames) { // 警示后人：forEach 不会等待 async 函数完成
+        if (username.length > 100) {
+            const errorMessage = document.createElement('p');
+            errorMessage.textContent = '添加参与者时发生错误：参与者名称长度不能超过 100 个字符';
+            errorMessage.classList.add('error-message');
+            resultDiv.appendChild(errorMessage);
+            submitButton.disabled = false;
+            return;
+        }
         const res = await fetch('/user/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

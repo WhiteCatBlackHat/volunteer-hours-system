@@ -14,6 +14,14 @@ async function submitEditUserForm() {
         resultDiv.appendChild(errorMessage);
         return;
     }
+    if (newUsername.length > 100) {
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = '编辑参与者时发生错误：参与者名称长度不能超过 100 个字符';
+        errorMessage.classList.add('error-message');
+        resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
+        return;
+    }
     
     const res = await fetch(`/user/edit/${originalUsername}`, {
         method: 'PUT',
