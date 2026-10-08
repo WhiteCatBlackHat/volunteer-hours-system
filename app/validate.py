@@ -8,8 +8,8 @@ def validate_name(name, field='名称'):
     stripped = name.strip()
     if not stripped:
         return f'{field}不能为空'
-    if len(stripped) > 200:
-        return f'{field}长度不能超过 200 字符'
+    if len(stripped) > 100:
+        return f'{field}长度不能超过 100 字符'
     if INVALID_NAME_CHARS.search(stripped):
         return f'{field}不能包含以下特殊字符: < > & \' " \\ / ? # % = * | 或控制字符'
     return None
