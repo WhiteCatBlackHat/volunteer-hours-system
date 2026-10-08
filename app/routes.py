@@ -2,8 +2,9 @@ from datetime import datetime
 from .models import Task, User, task_users
 from flask import Blueprint, render_template, jsonify, request, current_app
 from .extensions import db
-from .validate import validate_name, validate_description
+from .validate import validate_name, validate_description, validate_hours
 from .utils.decorators import admin_required
+import re
 
 main_bp = Blueprint('main', __name__)
 
@@ -35,9 +36,9 @@ def new_task_page():
 @main_bp.route('/task/add', methods=['POST'])
 @admin_required
 def add_task():
-    data = request.get_json()
-    if not data:
-        return jsonify({'error': '请提供要添加的任务信息'}), 400
+    data = request.get_json(silent=True)
+    if data is None or not isinstance(data, dict):
+        return jsonify({'error': '请提供有效的 JSON 数据'}), 400
 
     name = data.get('name')
     start_time_str = data.get('start_time')
@@ -46,8 +47,16 @@ def add_task():
     description = data.get('description', '')
     usernames = data.get('usernames', [])
 
-    if not all([name, start_time_str, end_time_str, hours, description, usernames]):
-        return jsonify({'error': '请填写所有字段，包括至少一个参与者'}), 400
+    if not name:
+        return jsonify({'error': '请提供任务名称'}), 400
+    if not start_time_str:
+        return jsonify({'error': '请提供任务开始时间'}), 400
+    if not end_time_str:
+        return jsonify({'error': '请提供任务结束时间'}), 400
+    if not hours:
+        return jsonify({'error': '请提供任务时长'}), 400
+    if not usernames:
+        return jsonify({'error': '请至少提供一个参与者'}), 400
     
     err = validate_name(name, '任务名称')
     if err:
@@ -63,10 +72,17 @@ def add_task():
     try:
         start_time = datetime.fromisoformat(start_time_str)
         end_time = datetime.fromisoformat(end_time_str)
-    except ValueError:
+    except (ValueError, TypeError):
         return jsonify({'error': '无效的日期格式'}), 400
+    
+    err = validate_hours(hours, '任务时长')
+    if err:
+        return jsonify({'error': err}), 400
 
     task = Task(name=name, start_time=start_time, end_time=end_time, hours=hours, description=description)
+    
+    if not isinstance(usernames, list):
+        return jsonify({'error': '参与者必须是列表'}), 400
 
     for username in usernames:
         user = User.query.filter_by(username=username).first()
@@ -107,8 +123,8 @@ def edit_task_page(task_id):
 @admin_required
 def edit_task(task_id):
     data = request.get_json()
-    if not data:
-        return jsonify({'error': '请提供编辑后的任务信息'}), 400
+    if data is None or not isinstance(data, dict):
+        return jsonify({'error': '请提供有效的 JSON 数据'}), 400
 
     task = db.session.get(Task, task_id)
     if not task:
@@ -124,13 +140,13 @@ def edit_task(task_id):
     if 'start_time' in data:
         try:
             task.start_time = datetime.fromisoformat(data['start_time'])
-        except ValueError:
+        except (ValueError, TypeError):
             return jsonify({'error': '无效的开始时间格式'}), 400
 
     if 'end_time' in data:
         try:
             task.end_time = datetime.fromisoformat(data['end_time'])
-        except ValueError:
+        except (ValueError, TypeError):
             return jsonify({'error': '无效的结束时间格式'}), 400
 
     if 'description' in data:
@@ -139,12 +155,19 @@ def edit_task(task_id):
         if err:
             return jsonify({'error': err}), 400
         task.description = description
-
+        
     if 'hours' in data:
+        err = validate_hours(data['hours'], '任务时长')
+        if err:
+            return jsonify({'error': err}), 400
         task.hours = data['hours']
 
     if 'usernames' in data:
         task.users.clear()
+        if not isinstance(data['usernames'], list):
+            return jsonify({'error': '参与者必须是列表'}), 400
+        if not data['usernames']:
+            return jsonify({'error': '请至少提供一个参与者'}), 400
         for username in data['usernames']:
             user = User.query.filter_by(username=username).first()
             err = validate_name(username, '参与者名称')
@@ -175,8 +198,8 @@ def new_user_page():
 @admin_required
 def add_user():
     data = request.get_json()
-    if not data:
-        return jsonify({'error': '请提供要添加的参与者信息'}), 400
+    if data is None or not isinstance(data, dict):
+        return jsonify({'error': '请提供有效的 JSON 数据'}), 400
 
     username = data.get('username')
     if not username:
@@ -222,8 +245,8 @@ def edit_user_page(username):
 @admin_required
 def edit_user(username):
     data = request.get_json()
-    if not data:
-        return jsonify({'error': '请提供编辑后的参与者信息'}), 400
+    if data is None or not isinstance(data, dict):
+        return jsonify({'error': '请提供有效的 JSON 数据'}), 400
 
     user = User.query.filter_by(username=username).first()
     if not user:
