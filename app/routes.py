@@ -197,6 +197,7 @@ def add_user():
 
 # 删除参与者
 @main_bp.route('/user/delete/<username>', methods=['DELETE'])
+@admin_required
 def delete_user(username):
     user = User.query.filter_by(username=username).first()
     if not user:
