@@ -7,7 +7,7 @@ async function loadUserDetails(username) {
     const tasksRes = await fetch(`/task/list`);
     const tasks = await tasksRes.json();
     const userTasks = tasks.filter(task => task.users.includes(username));
-    console.log(userTasks);
+    userTasks.sort((a, b) => (a.start_time != b.start_time ? b.start_time - a.start_time : b.end_time - a.end_time));
     
     const taskUl = document.getElementById('task-ul');
     userTasks.forEach(task => {
