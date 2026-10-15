@@ -93,7 +93,7 @@ def create_app(config_object='config.Config'):
             return redirect(url_for("auth.login", next=request.path))
     
     # 处理可能遗漏的错误
-    from werkzeug.exceptions import HTTPException
+    from werkzeug.exceptions import HTTPException, RequestEntityTooLarge
 
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):
@@ -110,5 +110,9 @@ def create_app(config_object='config.Config'):
         if request.path.startswith("/api/") or request.is_json or request.accept_mimetypes.best == "application/json":
             return jsonify({"error": "服务器内部错误"}), 500
         raise   # 非 API 请求，仍然走默认 500 页
+    
+    @app.errorhandler(RequestEntityTooLarge)
+    def handle_413(e):
+        return jsonify({"error": "请求体过大，最大 1MB"}), 413
 
     return app
