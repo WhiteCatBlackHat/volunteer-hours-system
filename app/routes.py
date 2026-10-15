@@ -197,10 +197,23 @@ def edit_task(task_id):
 # 获取参与者列表
 @main_bp.route('/user/list', methods=['GET'])
 def list_users():
-    users = User.query.options(
-        selectinload(User.tasks)
-    ).order_by(User.username).all()
-    return jsonify([user.to_brief() for user in users])
+    rows = db.session.query(
+        User.id,
+        User.username,
+        func.coalesce(func.sum(Task.hours), 0).label('total_hours')
+    ).outerjoin(
+        task_users, User.id == task_users.c.user_id
+    ).outerjoin(
+        Task, Task.id == task_users.c.task_id
+    ).group_by(User.id, User.username).order_by(User.username).all()
+    return jsonify([
+        {
+            'id': r.id,
+            'username': r.username,
+            'total_hours': float(r.total_hours)
+        }
+        for r in rows
+    ])
 
 # 新建参与者页面
 @main_bp.route('/user/new')
