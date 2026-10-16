@@ -32,7 +32,8 @@ class Admin(db.Model, UserMixin):
 task_users = db.Table(
     'task_users',
     db.Column('task_id', db.Integer, db.ForeignKey('task.id'), primary_key=True),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Index('ix_task_users_user_id', 'user_id')
 )
 
 class User(db.Model):
@@ -43,17 +44,26 @@ class User(db.Model):
     tasks = db.relationship('Task', secondary=task_users, back_populates='users', lazy='dynamic')
 
     def to_dict(self):
+        hours = 0
+        for task in self.tasks:
+            hours += task.hours
         return {
             'id': self.id,
             'username': self.username,
-            'tasks': [task.to_dict() for task in self.tasks]
+            'tasks': [task.to_brief() for task in self.tasks],
+            'hours': hours
+        }
+    def to_brief(self):
+        return {
+            'id': self.id,
+            'username': self.username
         }
 
 class Task(db.Model):
     __tablename__ = 'task'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    start_time = db.Column(db.DateTime, nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False, index=True)
     end_time = db.Column(db.DateTime, nullable=False)
     hours = db.Column(db.Float, nullable=False)
     description = db.Column(db.Text, nullable=True)
@@ -69,5 +79,14 @@ class Task(db.Model):
             'end_time': self.end_time.isoformat(),
             'hours': self.hours,
             'users': users,
+            'description': self.description
+        }
+    def to_brief(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'start_time': self.start_time.isoformat(),
+            'end_time': self.end_time.isoformat(),
+            'hours': self.hours,
             'description': self.description
         }

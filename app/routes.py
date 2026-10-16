@@ -4,6 +4,8 @@ from flask import Blueprint, render_template, jsonify, request, current_app
 from .extensions import db
 from .validate import validate_name, validate_description, validate_hours
 from .utils.decorators import admin_required
+from sqlalchemy import func
+from sqlalchemy.orm import selectinload
 import re
 
 main_bp = Blueprint('main', __name__)
@@ -11,20 +13,27 @@ main_bp = Blueprint('main', __name__)
 # 美丽的主页
 @main_bp.route('/')
 def home():
-    current_app.logger.debug("Fetching all tasks from the database.")
-    tasks = db.session.query(Task).all()
-    tasks = [task.to_dict() for task in tasks]
-    status = {}
-    for task in tasks:
-        for user in task['users']:
-            status[user] = status.get(user, 0) + task['hours']
-    return render_template('index.html', tasks=tasks, status=status)
+    return render_template('index.html')
 
 # 获取任务列表
 @main_bp.route('/task/list', methods=['GET'])
 def list_tasks():
-    tasks = Task.query.order_by(Task.start_time.desc()).all()
-    return jsonify([task.to_dict() for task in tasks])
+    page = request.args.get('page', 1, type=int)
+    per_page = min(request.args.get('per_page', 50, type=int), 200)
+    
+    pagination = Task.query.options(
+        selectinload(Task.users)
+    ).order_by(Task.start_time.desc()).paginate(
+        page=page, per_page=per_page, error_out=False
+    )
+    
+    return jsonify({
+        "items": [task.to_dict() for task in pagination.items],
+        "total": pagination.total,
+        "page": pagination.page,
+        "pages": pagination.pages,
+        "per_page": pagination.per_page
+    })
 
 # 新建任务页面
 @main_bp.route('/task/new')
@@ -84,6 +93,8 @@ def add_task():
     if not isinstance(usernames, list):
         return jsonify({'error': '参与者必须是列表'}), 400
 
+    if len(usernames) > 1000:
+            return jsonify({'error': '不得设置超过 1000 个参与者'}), 400
     for username in usernames:
         user = User.query.filter_by(username=username).first()
         if user:
@@ -168,6 +179,8 @@ def edit_task(task_id):
             return jsonify({'error': '参与者必须是列表'}), 400
         if not data['usernames']:
             return jsonify({'error': '请至少提供一个参与者'}), 400
+        if len(data['usernames']) > 1000:
+            return jsonify({'error': '不得设置超过 1000 个参与者'}), 400
         for username in data['usernames']:
             user = User.query.filter_by(username=username).first()
             err = validate_name(username, '参与者名称')
@@ -184,8 +197,23 @@ def edit_task(task_id):
 # 获取参与者列表
 @main_bp.route('/user/list', methods=['GET'])
 def list_users():
-    users = User.query.order_by(User.username).all()
-    return jsonify([user.to_dict() for user in users])
+    rows = db.session.query(
+        User.id,
+        User.username,
+        func.coalesce(func.sum(Task.hours), 0).label('total_hours')
+    ).outerjoin(
+        task_users, User.id == task_users.c.user_id
+    ).outerjoin(
+        Task, Task.id == task_users.c.task_id
+    ).group_by(User.id, User.username).order_by(User.username).all()
+    return jsonify([
+        {
+            'id': r.id,
+            'username': r.username,
+            'total_hours': float(r.total_hours)
+        }
+        for r in rows
+    ])
 
 # 新建参与者页面
 @main_bp.route('/user/new')
@@ -275,12 +303,12 @@ def user_detail_page(username):
 
     return render_template('user.html', user=user)
 
-# 计算某个参与者的总志愿时长
-@main_bp.route('/user/<username>/total_hours', methods=['GET'])
+# 获取某个用户的详情
+@main_bp.route('/user/<username>/details', methods=['GET'])
 def total_hours(username):
     user = User.query.filter_by(username=username).first()
     if not user:
         return jsonify({'error': '参与者未找到'}), 404
 
-    total_hours = sum(task.hours for task in user.tasks)
-    return jsonify({'username': username, 'total_hours': total_hours})
+    return jsonify(user.to_dict()), 200
+    

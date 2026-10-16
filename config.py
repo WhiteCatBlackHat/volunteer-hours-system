@@ -11,4 +11,5 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-change-me")
     SQLALCHEMY_DATABASE_URI = "sqlite:///" + DB_PATH.as_posix()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    MAX_CONTENT_LENTH = 1*1024*1024
     # DEBUG = True

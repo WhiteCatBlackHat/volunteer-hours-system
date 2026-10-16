@@ -1,14 +1,12 @@
 async function loadUserDetails(username) {
-    const totalHoursRes = await fetch(`/user/${username}/total_hours`);
-    const totalHoursData = await totalHoursRes.json();
-    const totalHours = totalHoursData['total_hours'] || 0;
+    const userDetailRes = await fetch(`/user/${username}/details`);
+    const userDetailData = await userDetailRes.json();
+    const userTasks = userDetailData['tasks'];
+    const totalHours = userDetailData['hours'] || 0;
+
     document.getElementById('total-hours').textContent = totalHours;
-    
-    const tasksRes = await fetch(`/task/list`);
-    const tasks = await tasksRes.json();
-    const userTasks = tasks.filter(task => task.users.includes(username));
-    userTasks.sort((a, b) => (a.start_time != b.start_time ? b.start_time - a.start_time : b.end_time - a.end_time));
-    
+
+    userTasks.sort((a, b) => new Date(b.start_time) - new Date(a.start_time));
     const taskUl = document.getElementById('task-ul');
     userTasks.forEach(task => {
         const li = document.createElement('li');
