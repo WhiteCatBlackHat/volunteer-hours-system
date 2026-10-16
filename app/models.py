@@ -44,10 +44,14 @@ class User(db.Model):
     tasks = db.relationship('Task', secondary=task_users, back_populates='users', lazy='dynamic')
 
     def to_dict(self):
+        hours = 0
+        for task in self.tasks:
+            hours += task.hours
         return {
             'id': self.id,
             'username': self.username,
-            'tasks': [task.to_dict() for task in self.tasks]
+            'tasks': [task.to_brief() for task in self.tasks],
+            'hours': hours
         }
     def to_brief(self):
         return {
@@ -75,5 +79,14 @@ class Task(db.Model):
             'end_time': self.end_time.isoformat(),
             'hours': self.hours,
             'users': users,
+            'description': self.description
+        }
+    def to_brief(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'start_time': self.start_time.isoformat(),
+            'end_time': self.end_time.isoformat(),
+            'hours': self.hours,
             'description': self.description
         }

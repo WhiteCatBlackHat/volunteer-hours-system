@@ -303,12 +303,12 @@ def user_detail_page(username):
 
     return render_template('user.html', user=user)
 
-# 计算某个参与者的总志愿时长
-@main_bp.route('/user/<username>/total_hours', methods=['GET'])
+# 获取某个用户的详情
+@main_bp.route('/user/<username>/details', methods=['GET'])
 def total_hours(username):
     user = User.query.filter_by(username=username).first()
     if not user:
         return jsonify({'error': '参与者未找到'}), 404
 
-    total_hours = sum(task.hours for task in user.tasks)
-    return jsonify({'username': username, 'total_hours': total_hours})
+    return jsonify(user.to_dict()), 200
+    
