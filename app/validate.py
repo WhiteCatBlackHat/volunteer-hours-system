@@ -26,6 +26,7 @@ def validate_description(description, field='描述'):
         return f'{field}长度不能超过 1000 字符'
     if not DESCRIPTION_RE.search(stripped):
         return f'{field}只能包含以下字符: 大小写字母、数字、下划线、连字符、汉字、空格、中英文标点符号（` < > " \' / \\ 除外）'
+    return None
     
 def validate_hours(hours, field='志愿时长'):
     if (not isinstance(hours, (int, float))) or isinstance(hours, bool):
