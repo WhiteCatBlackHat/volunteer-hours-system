@@ -1,6 +1,6 @@
 import re
 
-NAME_RE = re.compile(r'^[\w\-\u4e00-\u9fff]+$')
+NAME_RE = re.compile(r'^[\w\-\u4e00-\u9fff ]+$')
 
 def validate_name(name, field='名称'):
     if not isinstance(name, str):
