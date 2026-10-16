@@ -93,8 +93,8 @@ def add_task():
     if not isinstance(usernames, list):
         return jsonify({'error': '参与者必须是列表'}), 400
 
-    if len(usernames) > 100:
-            return jsonify({'error': '最多不超过 100 个参与者'}), 400
+    if len(usernames) > 1000:
+            return jsonify({'error': '不得设置超过 1000 个参与者'}), 400
     for username in usernames:
         user = User.query.filter_by(username=username).first()
         if user:
@@ -179,8 +179,8 @@ def edit_task(task_id):
             return jsonify({'error': '参与者必须是列表'}), 400
         if not data['usernames']:
             return jsonify({'error': '请至少提供一个参与者'}), 400
-        if len(data['usernames']) > 100:
-            return jsonify({'error': '最多不超过 100 个参与者'}), 400
+        if len(data['usernames']) > 1000:
+            return jsonify({'error': '不得设置超过 1000 个参与者'}), 400
         for username in data['usernames']:
             user = User.query.filter_by(username=username).first()
             err = validate_name(username, '参与者名称')
