@@ -4,6 +4,7 @@ from flask import Blueprint, render_template, jsonify, request, current_app
 from .extensions import db
 from .validate import validate_name, validate_description, validate_hours
 from .utils.decorators import admin_required
+from .utils.numbers import round_half_up
 from sqlalchemy import func
 from sqlalchemy.orm import selectinload
 import re
@@ -88,6 +89,7 @@ def add_task():
     if err:
         return jsonify({'error': err}), 400
 
+    hours = round_half_up(hours)
     task = Task(name=name, start_time=start_time, end_time=end_time, hours=hours, description=description)
     
     if not isinstance(usernames, list):
@@ -172,6 +174,7 @@ def edit_task(task_id):
         if err:
             return jsonify({'error': err}), 400
         task.hours = data['hours']
+        task.hours = round_half_up(task.hours)
 
     if 'usernames' in data:
         task.users.clear()
@@ -210,7 +213,7 @@ def list_users():
         {
             'id': r.id,
             'username': r.username,
-            'total_hours': float(r.total_hours)
+            'total_hours': round_half_up(float(r.total_hours))
         }
         for r in rows
     ])
