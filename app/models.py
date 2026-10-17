@@ -2,6 +2,7 @@ from .extensions import db
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
+from .utils.numbers import round_half_up
 
 # 管理员账户
 class Admin(db.Model, UserMixin):
@@ -47,6 +48,7 @@ class User(db.Model):
         hours = 0
         for task in self.tasks:
             hours += task.hours
+        hours = round_half_up(hours)
         return {
             'id': self.id,
             'username': self.username,

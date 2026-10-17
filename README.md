@@ -33,7 +33,8 @@ volunteer-hours-system/
 │   │   ├── forms.py                      # LoginForm（FlaskForm）
 │   │   └── routes.py                     # /login /logout
 │   ├── utils/                            # 工具模块
-│   │   └── decorators.py                 # admin_required 装饰器
+│   │   ├── decorators.py                 # admin_required 装饰器
+│   │   └── numbers.py                    # round_half_up 四舍五入函数
 │   ├── templates/                        # Jinja2 模板
 │   └── static/                           # 静态资源（JS / CSS / favicon）
 ├── docs/                                 # 文档
