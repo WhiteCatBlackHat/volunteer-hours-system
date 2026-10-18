@@ -145,7 +145,7 @@ flask ban
 | GET | `/user/edit/<username>` | 编辑参与者页面 |
 | PUT | `/user/edit/<username>` | 编辑参与者 |
 | DELETE | `/user/delete/<username>` | 删除参与者 |
-| GET | `/user/<username>/total_hours` | 累计时长 |
+| GET | `/user/<username>/details` | 参与者详情 |
 
 ## 使用说明
 
