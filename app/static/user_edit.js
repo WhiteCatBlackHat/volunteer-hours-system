@@ -12,6 +12,7 @@ async function submitEditUserForm() {
         errorMessage.textContent = '编辑参与者信息时发生错误：请填写一个新的参与者名称';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
         return;
     }
     if (newUsername.length > 100) {

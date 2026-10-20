@@ -12,6 +12,7 @@ async function submitUserForm() {
         errorMessage.textContent = '添加参与者时发生错误：请填写至少一个参与者名';
         errorMessage.classList.add('error-message');
         resultDiv.appendChild(errorMessage);
+        submitButton.disabled = false;
         return;
     }
 
